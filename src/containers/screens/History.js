@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {View, Text, ImageBackground, StyleSheet, Platform, FlatList, Dimensions } from 'react-native';
-import { Table, Row, Rows } from 'react-native-table-component'
+import TableStack from '../templates/TableStack';
 
 export default class History extends React.Component {
     constructor(props) {
@@ -19,7 +19,7 @@ export default class History extends React.Component {
         const state = this.state;
         return(
             <ImageBackground
-            source={require('../images/bg-home.jpg')}
+            source={require('../../assets/images/bg-home.jpg')}
             style={{width:"100%", height:'100%'}}>
 
                 <View style={{paddingHorizontal:25, marginTop:50}}>
@@ -32,23 +32,9 @@ export default class History extends React.Component {
                     </Text>
                 </View>
 
-                <View style={styles.container}>
-                    <Table borderStyle={{borderWidth: 2, borderColor: '#6B9080'}}>
-                        <Row data={state.tableHead} style={styles.head} textStyle={styles.text}/>
-                        <Rows data={state.tableData} style={styles.body} textStyle={styles.text}/>
-                    </Table>
-                </View>
+                <TableStack dataHead={state.tableHead} dataTable={state.tableData}/>
 
             </ImageBackground>
         );
     }
 }
-
-const styles = StyleSheet.create(
-    {
-      container: { flex: 1, padding: 25},
-      head: { height: 40, backgroundColor: '#A4C3B2' },
-      text: { margin: 6 },
-      body: { height: 40, backgroundColor: '#fff' }
-    }
-);

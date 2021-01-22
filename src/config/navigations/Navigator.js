@@ -1,9 +1,9 @@
 import {createStackNavigator} from 'react-navigation-stack';
 import {createAppContainer} from 'react-navigation';
-import Login from '../screens/Login';
-import Register from '../screens/Register';
-import Home from '../screens/Home';
-import History from '../screens/History';
+import Login from '../../containers/screens/Login';
+import Register from '../../containers/screens/Register';
+import Home from '../../containers/screens/Home';
+import History from '../../containers/screens/History';
 
 const stackNavigatorOptions = {
     headerShown : false

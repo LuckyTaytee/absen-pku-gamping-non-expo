@@ -1,7 +1,8 @@
 import React from 'react';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
-import {View, Text, ImageBackground, Button, StyleSheet, Platform, FlatList, Dimensions } from 'react-native';
-import { Table, Row, Rows } from 'react-native-table-component';
+import {View, Text, ImageBackground, StyleSheet, Platform, FlatList, Dimensions } from 'react-native';
+import TableStack from '../templates/TableStack';
+import Button from '../../components/atoms/Button'
 
 export default class Home extends React.Component {
     constructor() {
@@ -71,10 +72,10 @@ export default class Home extends React.Component {
         const {navigate} = this.props.navigation
         return(
             <ImageBackground
-            source={require('../images/bg-home.jpg')}
+            source={require('../../assets/images/bg-home.jpg')}
             style={{width:"100%", height:'100%'}}>
 
-                <View style={{width:'100%', alignSelf:'center', flex:1 }}>    
+                <View style={{width:'100%', alignSelf:'center', flex:1, marginBottom:25 }}>    
                     <Text style={[styles.text, { fontFamily:"Mont-Bold", marginTop:35 }]}>
                         Selamat datang,
                         <Text>{'\t'}{'\t'}[Nama]</Text>
@@ -90,26 +91,15 @@ export default class Home extends React.Component {
                         Saat ini Anda terjadwal,
                         <Text>{'\t'}{'\t'}[Shift] :</Text>
                     </Text>
-                    
-                    <View style={styles.container}>
-                        <Table borderStyle={{borderWidth: 2, borderColor: '#6B9080'}}>
-                            <Row data={state.tableHead} style={styles.tableHead} textStyle={styles.tableText}/>
-                            <Rows data={state.tableData} style={styles.tableBody} textStyle={styles.tableText}/>
-                        </Table>
-                    </View>
+
+                    <TableStack dataHead={state.tableHead} dataTable={state.tableData}/>
 
                     <TouchableOpacity onPress={this.getAbsenTime}>
-                        <View style={[styles.button, {backgroundColor:'white'}]}>
-                                <Text style={{fontFamily:"Mont-Bold", color:"#00716F"}}>
-                                    {this.state.absenType}</Text>
-                        </View>
+                        <Button text={this.state.absenType} bgColor='#FFF' textColor='#00716F'/>
                     </TouchableOpacity>
 
                     <TouchableOpacity onPress={()=>navigate('History')}>
-                        <View style={[styles.button, {backgroundColor:'#06C7C4', marginBottom:25}]}>             
-                            <Text id='buttonabsen' style={{fontFamily:"Mont-Bold", color:"#00716F"}}>
-                                Riwayat Absen</Text>
-                        </View>
+                        <Button text='Riwayat Absen' bgColor='#06C7C4' textColor='#00716F'/>
                     </TouchableOpacity>
                 
                 </View>
@@ -142,11 +132,6 @@ const styles = StyleSheet.create(
         color:'white',
         paddingHorizontal:25,
         marginTop:25
-      },
+      }
 
-      container: { flex: 1, padding: 25},
-      tableHead: { height: 40, backgroundColor: '#A4C3B2' },
-      tableText: { margin: 6 },
-      tableBody: { height: 40, backgroundColor: '#fff' }
-  
     });
