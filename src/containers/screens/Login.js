@@ -6,6 +6,14 @@ import TextForm from '../../components/atoms/TextForm';
 import Header from '../../containers/templates/Header';
 
 export default class Login extends React.Component{
+    constructor() {
+        super();
+        this.state = { secureTextEntry: true }
+    }
+
+    updateSecureTextEntry = () => {        
+        this.setState({ secureTextEntry: !this.state.secureTextEntry });
+    }
 
     render(){
         const {navigate} = this.props.navigation
@@ -15,7 +23,12 @@ export default class Login extends React.Component{
 
                 <TextForm placeholder="NIK" keyboardType="number-pad"/>
 
-                <TextForm placeholder="Password" secure={true}/>
+                <TextForm placeholder="Password"
+                    secure={this.state.secureTextEntry ? true : false }
+                    onPress={this.updateSecureTextEntry}
+                    condition={this.state.secureTextEntry}
+                    nameIcon1="eye"
+                    nameIcon2="eye-off"/>
  
                 <TouchableOpacity onPress={()=>navigate('Home')}>
                     <Button text='Login' bgColor='#00716F' textColor='#FFF'/>

@@ -9,7 +9,10 @@ import Header from '../../containers/templates/Header';
 export default class Register extends React.Component{
     constructor(props) {
         super(props);
-        this.state = {uniqueId:''};
+        this.state = {
+            uniqueId:'',
+            secureTextEntry: true,
+            confirm_secureTextEntry: true };
     }
 
     componentDidMount() {
@@ -20,6 +23,14 @@ export default class Register extends React.Component{
         let uniqId = DeviceInfo.getUniqueId();
         this.setState({uniqueId: uniqId});
     };
+
+    updateSecureTextEntry = () => {        
+        this.setState({ secureTextEntry: !this.state.secureTextEntry });
+    }
+
+    updateConfirmSecureTextEntry = () => {        
+        this.setState({ confirm_secureTextEntry: !this.state.confirm_secureTextEntry });
+    }
 
     render(){
         return(
@@ -32,9 +43,19 @@ export default class Register extends React.Component{
 
                 <TextForm placeholder="Email" keyboardType="email-address"/>
 
-                <TextForm placeholder="Password" secure={true}/>
+                <TextForm placeholder="Password"
+                    secure={this.state.secureTextEntry ? true : false }
+                    onPress={this.updateSecureTextEntry}
+                    condition={this.state.secureTextEntry}
+                    nameIcon1="eye"
+                    nameIcon2="eye-off"/>
 
-                <TextForm placeholder="Confirm Password" secure={true}/>
+                <TextForm placeholder="Confirm Password"
+                    secure={this.state.confirm_secureTextEntry ? true : false }
+                    onPress={this.updateConfirmSecureTextEntry}
+                    condition={this.state.confirm_secureTextEntry}
+                    nameIcon1="eye"
+                    nameIcon2="eye-off"/>
 
                 <TouchableOpacity>
                     <Button text='Register' bgColor='#00716F' textColor='#FFF'/>
