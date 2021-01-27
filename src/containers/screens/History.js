@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ImageBackground, StyleSheet, Platform, FlatList, Dimensions } from 'react-native';
-import TableStack from '../templates/TableStack';
 
 const baseURL = "http://192.168.5.91/apieabsen/api/absen/getdata?";
 
@@ -28,27 +27,27 @@ export default function History() {
                     fontSize: 20,
                     color: 'white',
                 }}>
-                    Riwayat Absen (3 terakhir)
+                    Riwayat Absen (5 terakhir)
                 </Text>
             </View>
 
             <View style={{ flex: 1, marginHorizontal: 25, marginTop: 10 }}>
                 <View style={[styles.listWrapper, {backgroundColor:'#A4C3B2'}]}>
-                    <Text style={styles.movie}>Tanggal</Text>
-                    <Text style={styles.movie}>Acuan Masuk</Text>
-                    <Text style={styles.movie}>Acuan Keluar</Text>
-                    <Text style={styles.movie}>Absen Masuk</Text>
-                    <Text style={styles.movie}>Absen Keluar</Text>
+                    <Text style={styles.textTable}>Tanggal</Text>
+                    <Text style={styles.textTable}>Acuan Masuk</Text>
+                    <Text style={styles.textTable}>Acuan Keluar</Text>
+                    <Text style={styles.textTable}>Absen Masuk</Text>
+                    <Text style={styles.textTable}>Absen Keluar</Text>
                 </View>
                 <FlatList data={data}
                     keyExtractor={({ id }, index) => id}
                     renderItem={({ item }) => (
                         <View style={[styles.listWrapper, {backgroundColor:'#FFF'}]}>
-                            <Text style={styles.movie}>{item.FD_JADWAL_MASUK.substring(5, 10).split("-").reverse().join("/")}</Text>
-                            <Text style={styles.movie}>{item.FD_JADWAL_MASUK.substring(11, 16)}</Text>
-                            <Text style={styles.movie}>{item.FD_JADWAL_KELUAR.substring(11, 16)}</Text>
-                            <Text style={styles.movie}>{item.FD_TRS_MASUK.substring(11, 16)}</Text>
-                            <Text style={styles.movie}>{item.FD_TRS_KELUAR.substring(11, 16)}</Text>
+                            <Text style={styles.textTable}>{item.FD_JADWAL_MASUK.substring(5, 10).split("-").reverse().join("/")}</Text>
+                            <Text style={styles.textTable}>{item.FD_JADWAL_MASUK.substring(11, 16)}</Text>
+                            <Text style={styles.textTable}>{item.FD_JADWAL_KELUAR.substring(11, 16)}</Text>
+                            <Text style={styles.textTable}>{item.FD_TRS_MASUK.substring(11, 16)}</Text>
+                            <Text style={styles.textTable}>{item.FD_TRS_KELUAR.substring(11, 16)}</Text>
                         </View>
                     )}
                 />
@@ -59,18 +58,9 @@ export default function History() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: "center",
-        marginTop: 24
-    },
-    movie: {
+    textTable: {
         flex: 1,
         alignSelf: 'center',
-    },
-    title: {
-        fontSize: 32,
-        fontWeight: "bold"
     },
     description: {
         textAlign: "center",
