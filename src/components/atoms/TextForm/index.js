@@ -18,6 +18,7 @@ const TextForm = props => {
                     placeholder={props.placeholder}
                     placeholderTextColor="#00716F"
                     keyboardType={props.keyboardType}
+                    onChangeText={props.onChangeText}
                     secureTextEntry={props.secure}/>
                 <TouchableOpacity onPress={props.onPress}>
                     {props.condition ? <Feather name={props.nameIcon1} color="#00716F" size={20}/> : <Feather name={props.nameIcon2} color="#00716F" size={20}/>}

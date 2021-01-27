@@ -8,7 +8,18 @@ import Header from '../../containers/templates/Header';
 export default class Login extends React.Component{
     constructor() {
         super();
-        this.state = { secureTextEntry: true }
+        this.state = { 
+            username: '',
+            password: '',
+            secureTextEntry: true }
+    }
+
+    textInputChange = (val) => {
+        this.setState({ nik: val });
+    }
+
+    handlePasswordChange = (val) => {
+        this.setState({ password: val });
     }
 
     updateSecureTextEntry = () => {        
@@ -21,9 +32,10 @@ export default class Login extends React.Component{
             <View style={{backgroundColor:'#FFF', height:'100%'}}>
                 <Header/>
 
-                <TextForm placeholder="NIK" keyboardType="number-pad"/>
+                <TextForm placeholder="NIK" keyboardType="number-pad" onChangeText={(val) => this.textInputChange(val)}/>
 
                 <TextForm placeholder="Password"
+                    onChangeText={(val) => this.handlePasswordChange(val)}
                     secure={this.state.secureTextEntry ? true : false }
                     onPress={this.updateSecureTextEntry}
                     condition={this.state.secureTextEntry}

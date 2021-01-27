@@ -11,6 +11,10 @@ export default class Register extends React.Component{
         super(props);
         this.state = {
             uniqueId:'',
+            nik: '',
+            email: '',
+            password: '',
+            confirm_password: '',
             secureTextEntry: true,
             confirm_secureTextEntry: true };
     }
@@ -23,6 +27,22 @@ export default class Register extends React.Component{
         let uniqId = DeviceInfo.getUniqueId();
         this.setState({uniqueId: uniqId});
     };
+
+    textNIKChange = (val) => {
+        this.setState({ nik: val });
+    }
+
+    textEmailChange = (val) => {
+        this.setState({ email: val });
+    }
+
+    handlePasswordChange = (val) => {
+        this.setState({ password: val });
+    }
+
+    handleConfirmPasswordChange = (val) => {
+        this.setState({ confirm_password: val });
+    }
 
     updateSecureTextEntry = () => {        
         this.setState({ secureTextEntry: !this.state.secureTextEntry });
@@ -39,11 +59,12 @@ export default class Register extends React.Component{
 
                 <Text style={{alignSelf:'center'}}>{this.state.uniqueId}</Text>
 
-                <TextForm placeholder="NIK" keyboardType="number-pad"/>
+                <TextForm placeholder="NIK" keyboardType="number-pad" onChangeText={(val) => this.textNIKChange(val)}/>
 
-                <TextForm placeholder="Email" keyboardType="email-address"/>
+                <TextForm placeholder="Email" keyboardType="email-address" onChangeText={(val) => this.textEmailChange(val)}/>
 
                 <TextForm placeholder="Password"
+                    onChangeText={(val) => this.handlePasswordChange(val)}
                     secure={this.state.secureTextEntry ? true : false }
                     onPress={this.updateSecureTextEntry}
                     condition={this.state.secureTextEntry}
@@ -51,6 +72,7 @@ export default class Register extends React.Component{
                     nameIcon2="eye-off"/>
 
                 <TextForm placeholder="Confirm Password"
+                    onChangeText={(val) => this.handleConfirmPasswordChange(val)}
                     secure={this.state.confirm_secureTextEntry ? true : false }
                     onPress={this.updateConfirmSecureTextEntry}
                     condition={this.state.confirm_secureTextEntry}
