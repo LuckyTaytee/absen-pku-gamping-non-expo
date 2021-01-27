@@ -79,6 +79,6 @@ const styles = StyleSheet.create({
         color: "green",
     },
     listWrapper: {
-        padding: 10, flexDirection: 'row', borderWidth: 1, borderColor: "#6B9080"
+        padding: 10, flexDirection: 'row', borderWidth: 1.1, borderColor: "#6B9080"
     }
 });
