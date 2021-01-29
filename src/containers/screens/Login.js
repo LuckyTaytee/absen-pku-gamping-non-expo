@@ -74,9 +74,13 @@ export default class Login extends React.Component{
                     nameIcon1="eye"
                     nameIcon2="eye-off"/>
  
+                <View style={{marginBottom:20}}></View>
+
                 <TouchableOpacity onPress={this._login}>
                     <Button text='Login' bgColor='#00716F' textColor='#FFF'/>
                 </TouchableOpacity>
+
+                <Text style={{ alignSelf:"center", marginTop:20, fontFamily:'Mont-Regular'}}>Belum punya akun?</Text>
                     
                 <TouchableOpacity onPress={()=>navigate('Register')}>
                     <Button text='Register' bgColor='#FFF' textColor='#00716F'></Button>

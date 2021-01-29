@@ -15,8 +15,6 @@ const stackNavigatorOptions = {
 
 const AppNavigator = createStackNavigator({
     Home:{screen:Home},
-    Login:{screen:Login},
-    Register:{screen:Register},
     History:{screen:History}
 },
 {
@@ -24,7 +22,13 @@ const AppNavigator = createStackNavigator({
 }
 );
 
-const AuthStack = createStackNavigator({Login: Login}, {defaultNavigationOptions : stackNavigatorOptions});
+const AuthStack = createStackNavigator({
+    Login: Login,
+    Register: Register},
+{
+        defaultNavigationOptions : stackNavigatorOptions
+}
+);
 
 class AuthLoadingScreen extends Component {
     constructor(props){
@@ -43,7 +47,7 @@ class AuthLoadingScreen extends Component {
 
     _loadData = async() => {
         const isLoggedIn = await AsyncStorage.getItem('isLoggedIn');
-        this.props.navigation.navigate(isLoggedIn !== '1'? 'Auth' : 'App')
+        this.props.navigation.navigate(isLoggedIn !== '1' ? 'Auth' : 'App')
     }
 }
 

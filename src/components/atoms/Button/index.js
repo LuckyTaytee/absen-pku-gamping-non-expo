@@ -7,7 +7,6 @@ const Button = props => {
             marginHorizontal:55,
             alignItems:"center",
             justifyContent:"center",
-            marginTop:20,
             backgroundColor:props.bgColor,
             paddingVertical:8,
             borderRadius:23}}>
