@@ -73,14 +73,13 @@ export default class Register extends React.Component{
                 this.setState({
                     response: json.code,
                 });
+                if ( this.state.response === 200) {
+                    Alert.alert('Registrasi berhasil', 'Dapatkan approval dari tim IT terlebih dahulu agar dapat mengakses Login E-Absen')
+                    this.props.navigation.navigate('Login');
+                } else {
+                    Alert.alert('Registrasi belum berhasil', 'Data belum terdaftar pada sistem, silahkan coba lagi')
+                }
             })
-            .catch((error) => alert(error));
-            
-        if ( this.state.response == 200) {
-            Alert.alert('Registrasi berhasil', 'Silahkan login untuk menggunakan E-Absen')
-        } else {
-            Alert.alert('Registrasi belum berhasil', 'Data belum terdaftar pada sistem, silahkan coba lagi')
-        }
     }
 
     backAction = () => {

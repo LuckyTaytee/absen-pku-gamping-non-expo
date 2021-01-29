@@ -1,11 +1,11 @@
 import React from 'react';
 import {Text, View, Image, TextInput, StyleSheet} from 'react-native';
 
-const Header = props => {
+const Header = () => {
     return (
         <View>
             <Image style = {{width:100, height:100, alignSelf:'center', marginTop:35}}
-                    source = {require('../../../assets/images/logo.jpg')} />
+                source = {require('../../../assets/images/logo.jpg')} />
 
             <Text style = {{alignSelf:"center", color:"#00716F", fontSize:30, fontFamily:"Mont-Bold" }}>
                 E-Absen</Text>
