@@ -1,34 +1,83 @@
 import React from 'react';
-import {Text, View, BackHandler, Alert} from 'react-native';
+import {Text, View, BackHandler, Alert, Platform} from 'react-native';
+import DeviceInfo from 'react-native-device-info';
 import AsyncStorage from '@react-native-community/async-storage';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import Button from '../../components/atoms/Button/index';
 import TextForm from '../../components/atoms/TextForm';
 import Header from '../../containers/templates/Header';
 
-const userInfo = {nik: '12345', password: '12345'};
+import {Permission, PERMISSION_TYPE} from '../../config/permissions/AppPermission'
+
+const baseURL = "http://192.168.5.91/apieabsen/api/auth/loginpegawai"
 
 export default class Login extends React.Component{
     
     constructor() {
         super();
         this.state = { 
+            uniqueId: '',
             nik: '',
             password: '',
-            secureTextEntry: true }
+            response: '',
+            secureTextEntry: true
+        }
+    }
+
+    componentDidMount() {
+        Permission.checkPermission(PERMISSION_TYPE.location, Platform.OS)
+        this.getUniqueId();
+        this.backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            this.backAction
+        );
+    }
+
+    getUniqueId = () => {
+        let uniqId = DeviceInfo.getUniqueId();
+        this.setState({uniqueId: uniqId});
+    };
+
+    storeAsync = async() => {
+        await AsyncStorage.setItem('isLoggedIn', '1');
+    }
+
+    _login = () => {
+        
+        if ( this.state.nik == 0 || this.state.password == 0) {
+            Alert.alert('Data Belum Lengkap', 'Isi semua data yang diperlukan', [
+                {text: 'OK'}
+            ]);
+            return;
+        }
+
+        let dataLogin = new FormData();
+        dataLogin.append("FS_KD_DEVICE_ID", this.state.uniqueId);
+        dataLogin.append("FS_KD_PEG", this.state.nik);
+        dataLogin.append("FS_KD_PASSWORD", this.state.password);
+
+        fetch(baseURL, {
+            method:"POST",
+            body: dataLogin,
+            headers: { apikey: 'eabsenpku' }
+            })
+            .then(response => response.json())
+            .then(json => {
+                this.setState({
+                    response: json.code,
+                });
+                if ( this.state.response === 200) {
+                    this.storeAsync();
+                    this.props.navigation.navigate('Home')
+                } else {
+                    alert('DeviceID atau Password tidak cocok')
+                }
+            })
+
     }
 
     updateSecureTextEntry = () => {        
         this.setState({ secureTextEntry: !this.state.secureTextEntry });
-    }
-
-    _login = async() => {
-        if(userInfo.nik === this.state.nik && userInfo.password === this.state.password) {
-            await AsyncStorage.setItem('isLoggedIn', '1');
-            this.props.navigation.navigate('Home')
-        } else {
-            alert('NIK atau Password salah')
-        }
     }
 
     backAction = () => {
@@ -41,32 +90,28 @@ export default class Login extends React.Component{
           { text: "YA", onPress: () => BackHandler.exitApp() }
         ]);
         return true;
-      };
-    
-      componentDidMount() {
-        this.backHandler = BackHandler.addEventListener(
-          "hardwareBackPress",
-          this.backAction
-        );
-      }
-    
-      componentWillUnmount() {
-        this.backHandler.remove();
-      }
+    };
 
+    componentWillUnmount() {
+        this.backHandler.remove();
+    }
+    
     render(){
         const {navigate} = this.props.navigation;
         return(
             <View style={{backgroundColor:'#FFF', height:'100%'}}>
+                
                 <Header/>
 
                 <TextForm placeholder="NIK"
                 keyboardType="number-pad"
                 onChangeText={(nik)=>this.setState({nik})}
+                maxLength={4}
                 value={this.state.nik}/>
 
                 <TextForm placeholder="Password"
                     onChangeText={(password)=>this.setState({password})}
+                    maxLength={20}
                     value={this.state.password}
                     secure={this.state.secureTextEntry ? true : false }
                     onPress={this.updateSecureTextEntry}
@@ -85,6 +130,7 @@ export default class Login extends React.Component{
                 <TouchableOpacity onPress={()=>navigate('Register')}>
                     <Button text='Register' bgColor='#FFF' textColor='#00716F'></Button>
                 </TouchableOpacity>
+
             </View>
         )
     }

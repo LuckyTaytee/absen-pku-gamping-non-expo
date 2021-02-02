@@ -1,12 +1,16 @@
 import React from 'react';
-import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
-import {View, Text, ImageBackground, StyleSheet, ActivityIndicator } from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import {View, Text, ImageBackground, StyleSheet, ActivityIndicator, Dimensions } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import TableStack from '../templates/TableStack';
 import Button from '../../components/atoms/Button';
 import moment from 'moment';
 
+import Geolocation from 'react-native-geolocation-service';
+import DistanceLatLon from '../../config/geolocations/DistanceLatLon';
+
 const baseURL = "http://192.168.5.91/apieabsen/api/absen/getabsensi?";
+const width = Dimensions.get('window').width;
 
 export default class Home extends React.Component {
     constructor() {
@@ -14,29 +18,26 @@ export default class Home extends React.Component {
         this.state = { 
             isLoading: true,
             currentTime: moment().format("LTS"),
-            nama: '',
-            shift: '',
+            userInfo: {nama: '', shift: ''},
+            geolocate: {lat: 0, lon: 0, error: '', distance: 0, distanceFeedback: ''},
             absenTime: null,
             absenType:'Absen Masuk',
-            telatMasuk: '',
             data: {},
             tableHead: ['Jadwal', 'Acuan', 'Jam', 'Status'],
-            tableData: [
-              ['Masuk', '-', '-', '-'],
-              ['Keluar', '-', '-', '-']
-            ]  
+            tableData: [ ['Masuk', '-', '-', '-'], ['Keluar', '-', '-', '-'] ]  
         }
     }
 
     componentDidMount() {
-        fetch(baseURL + new URLSearchParams({ FS_KD_PEG: 1998 }))
+        fetch(baseURL + new URLSearchParams({ FS_KD_PEG: 1998 }), {
+            headers: { apikey: 'eabsenpku' }
+        })
             .then(response => response.json())
             .then(json => {
                 this.setState({
                     isLoading: false,
                     data: json.data
                 });
-                console.log(this.state.data);
                 let newArray = this.state.tableData;
                 newArray[0][1] = [this.state.data.absen[0].FD_JADWAL_MASUK.substring(11, 19)];
                 newArray[1][1] = [this.state.data.absen[0].FD_JADWAL_KELUAR.substring(11, 19)];
@@ -48,6 +49,26 @@ export default class Home extends React.Component {
                 this.setState({nama: this.state.data.details[0].FS_NM_PEG, shift: this.state.data.absen[0].FS_KD_SHIFT_KERJA, tableData: newArray})
             })
             .catch((error) => alert(error));
+        this.getUserPosition();
+    }
+
+    getUserPosition = () => {
+        Geolocation.getCurrentPosition(
+            this.geoSuccess,
+            error => {this.setState({ 
+                error: error.message,
+                distanceFeedback : 'Akses Lokasi belum diberikan, keluar dari Aplikasi E-Absen lalu jalankan ulang.' })},
+            { enableHighAccuracy: true, timeOut: 20000, maximumAge: 1000 }
+        );
+    }
+
+    geoSuccess = (position) => {
+        this.setState({lat: position.coords.latitude, lon: position.coords.longitude})
+        let distancee = DistanceLatLon(-7.8003602, 110.317859, this.state.lat, this.state.lon)
+        var r = Math.round((distancee + Number.EPSILON) * 100) / 100
+        console.log(r)
+        this.setState({distance: r})
+        if ( r > 0.2) {this.setState({distanceFeedback: 'Anda berada diluar zona RS PKU Gamping.'})}
     }
 
     render(){
@@ -87,14 +108,24 @@ export default class Home extends React.Component {
     
                         <Text style={[styles.text, { fontFamily:"Mont-Regular" }]}>
                             Saat ini Anda terjadwal,
-                            <Text style={{fontFamily:"Mont-Bold"}}>{'\t'}{state.shift}</Text>
+                            <Text style={{fontFamily:"Mont-Bold"}}>{'\t'}{'\t'}{state.shift}</Text>
                              :
                         </Text>
     
                         <TableStack dataHead={state.tableHead} dataTable={state.tableData}/>
-    
+
+                        {this.state.distance < 0.2 && this.state.distance != 0 ? 
+                            <Text style={[styles.text, { fontFamily:"Mont-Regular", textAlign: 'center' }]}>
+                            Lokasi anda berada, {this.state.distance} km dari RS PKU Gamping.</Text>
+                            : 
+                            <Text style={[styles.text, { fontFamily:"Mont-Regular", textAlign: 'center' }]}>
+                            {this.state.distanceFeedback}</Text>
+                        }
+
+                        <View style={{marginBottom:20}}></View>
+
                         <TouchableOpacity onPress={this.getAbsenTime}>
-                            <Button text={this.state.absenType} bgColor='#FFF' textColor='#00716F'/>
+                            {this.state.distance < 0.2 && this.state.distance != 0 ? <Button text={this.state.absenType} bgColor='#FFF' textColor='#00716F'/> : null }
                         </TouchableOpacity>
 
                         <View style={{marginBottom:20}}></View>
@@ -126,7 +157,7 @@ const styles = StyleSheet.create(
       timeText: {
         paddingHorizontal:25,
         fontFamily:'Mont-Bold',
-        fontSize: 50,
+        fontSize: 0.1*width,
         color: 'white'
       },
 
@@ -140,10 +171,10 @@ const styles = StyleSheet.create(
       },
 
       text: {
-        fontSize:18,
+        fontSize:0.05*width,
         color:'white',
         paddingHorizontal:25,
-        marginTop:25
+        marginTop:10
       },
 
       container: {

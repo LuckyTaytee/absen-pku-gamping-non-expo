@@ -7,7 +7,9 @@ export default function History() {
     const [data, setData] = useState([]);
 
     useEffect(() => {
-        fetch(baseURL + new URLSearchParams({ FS_KD_PEG: 1999 }))
+        fetch(baseURL + new URLSearchParams({ FS_KD_PEG: 1999 }), {
+            headers: { apikey: 'eabsenpku' }
+        })
             .then(response => response.json())
             .then(json => {
                 setData(json.data);
