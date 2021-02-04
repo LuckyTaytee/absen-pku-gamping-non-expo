@@ -16,10 +16,8 @@ export default class Login extends React.Component{
     constructor() {
         super();
         this.state = { 
-            uniqueId: '',
             nik: '',
             password: '',
-            response: '',
             secureTextEntry: true
         }
     }
@@ -38,10 +36,6 @@ export default class Login extends React.Component{
         this.setState({uniqueId: uniqId});
     };
 
-    storeAsync = async() => {
-        await AsyncStorage.setItem('isLoggedIn', '1');
-    }
-
     _login = () => {
         
         if ( this.state.nik == 0 || this.state.password == 0) {
@@ -56,6 +50,8 @@ export default class Login extends React.Component{
         dataLogin.append("FS_KD_PEG", this.state.nik);
         dataLogin.append("FS_KD_PASSWORD", this.state.password);
 
+        let response = '';
+
         fetch(baseURL, {
             method:"POST",
             body: dataLogin,
@@ -66,14 +62,22 @@ export default class Login extends React.Component{
                 this.setState({
                     response: json.code,
                 });
-                if ( this.state.response === 200) {
-                    this.storeAsync();
-                    this.props.navigation.navigate('Home')
+                if ( this.state.response != 200) {
+                    alert('DeviceID atau Password tidak cocok');
                 } else {
-                    alert('DeviceID atau Password tidak cocok')
-                }
+                    this.storeAsyncLogIn();
+                    this.props.navigation.navigate('Home');
+                }           
             })
+            this.storeAsyncNIK();
+    }
 
+    storeAsyncNIK = async() => {
+        await AsyncStorage.setItem('asyncNIK', this.state.nik);
+    }
+
+    storeAsyncLogIn = async() => {
+        await AsyncStorage.setItem('isLoggedIn', '1');
     }
 
     updateSecureTextEntry = () => {        
@@ -108,6 +112,8 @@ export default class Login extends React.Component{
                 onChangeText={(nik)=>this.setState({nik})}
                 maxLength={4}
                 value={this.state.nik}/>
+
+                <View style={{marginBottom:15}}></View>
 
                 <TextForm placeholder="Password"
                     onChangeText={(password)=>this.setState({password})}

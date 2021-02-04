@@ -1,19 +1,22 @@
 import React from 'react';
-import {Text, View, BackHandler, Alert} from 'react-native';
+import {Text, View, BackHandler, Alert, ScrollView, KeyboardAvoidingView} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import DeviceInfo from 'react-native-device-info';
 import Button from '../../components/atoms/Button/index';
 import TextForm from '../../components/atoms/TextForm';
 import Header from '../../containers/templates/Header';
 
-const baseURL = "http://192.168.5.91/apieabsen/api/absen/registerPegawai";
+const baseURL = "http://192.168.5.91/apieabsen/api/auth/registerPegawai";
 
 export default class Register extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
             uniqueId:'',
-            input: {nik: '', email: '', password: '', confirm_password: ''},
+            nik: '',
+            email: '',
+            password: '',
+            confirm_password: '',
             response: '',
             secureTextEntry: true,
             confirm_secureTextEntry: true
@@ -35,25 +38,11 @@ export default class Register extends React.Component{
 
     _register = async() => {
 
-        if ( this.state.input.nik == 0 || this.state.input.email == 0 || this.state.input.password == 0) {
-            Alert.alert('Data Belum Lengkap', 'Isi semua data yang diperlukan', [
-                {text: 'OK'}
-            ]);
-            return;
-        }
-
-        if ( this.state.input.password != this.state.input.confirm_password) {
-            Alert.alert('Registrasi gagal', 'Konfirmasi password belum sesuai', [
-                {text: 'OK'}
-            ]);
-            return;
-        }
-
         let dataRegister = new FormData();
         dataRegister.append("FS_KD_DEVICE_ID", this.state.uniqueId);
-        dataRegister.append("FS_KD_PEG", this.state.input.nik);
-        dataRegister.append("FS_NM_EMAIL", this.state.input.email);
-        dataRegister.append("FS_KD_PASSWORD", this.state.input.password);
+        dataRegister.append("FS_KD_PEG", this.state.nik);
+        dataRegister.append("FS_NM_EMAIL", this.state.email);
+        dataRegister.append("FS_KD_PASSWORD", this.state.password);
         fetch(baseURL, {
             method:"POST",
             body: dataRegister,
@@ -64,11 +53,16 @@ export default class Register extends React.Component{
                 this.setState({
                     response: json.code,
                 });
-                if ( this.state.response === 200) {
-                    Alert.alert('Registrasi berhasil', 'Dapatkan approval dari tim IT terlebih dahulu agar dapat mengakses Login E-Absen')
-                    this.props.navigation.navigate('Login');
-                } else {
-                    Alert.alert('Registrasi belum berhasil', 'Data belum terdaftar pada sistem, silahkan coba lagi')
+                switch (this.state.response) {
+                    case 200:
+                        Alert.alert('Registrasi berhasil', 'Dapatkan approval dari tim IT terlebih dahulu agar dapat mengakses Login E-Absen')
+                        this.props.navigation.navigate('Login');
+                        break;
+                    case 400:
+                        Alert.alert('Registrasi gagal', 'Perangkat Anda sudah pernah diregistrasi')
+                      break;
+                    default:
+                        Alert.alert('Registrasi belum berhasil', 'Data belum terdaftar pada sistem, silahkan coba lagi')
                 }
             })
     }
@@ -82,6 +76,20 @@ export default class Register extends React.Component{
         this.backHandler.remove();
     }
 
+    handlePasswordChange = (val) => {
+        if( val.trim().length >= 4 ) {
+            this.setState({
+                password: val,
+                isValidPassword: true 
+            })
+        } else {
+            this.setState({
+                password: val,
+                isValidPassword: false
+            })
+        }
+    }
+
     updateSecureTextEntry = () => {        
         this.setState({ secureTextEntry: !this.state.secureTextEntry });
     }
@@ -93,49 +101,73 @@ export default class Register extends React.Component{
     render(){
         const {navigate} = this.props.navigation;
         return(
-            <View style={{backgroundColor:"#FFF", height:"100%"}}>
-                <Header/>
+            <KeyboardAvoidingView style={{flex: 1, backgroundColor:"#FFF"}} behavior="height" >
+                <ScrollView>
+                    <Header/>
 
-                <Text>{this.state.uniqueId}</Text>
+                    <Text style={{alignSelf:'center'}}>{this.state.uniqueId}</Text>
 
-                <TextForm placeholder="NIK"
-                    keyboardType="number-pad"
-                    maxLength={4}
-                    onChangeText={(nik)=>this.setState({nik})}/>
+                    <TextForm placeholder="NIK"
+                        keyboardType="number-pad"
+                        maxLength={4}
+                        onChangeText={(nik)=>this.setState({nik})}/>
 
-                <TextForm placeholder="Email" keyboardType="email-address" onChangeText={(email)=>this.setState({email})}/>
+                    <View style={{marginBottom:17}}></View>
 
-                <TextForm placeholder="Password"
-                    onChangeText={(password)=>this.setState({password})}
-                    maxLength={20}
-                    secure={this.state.secureTextEntry ? true : false }
-                    onPress={this.updateSecureTextEntry}
-                    condition={this.state.secureTextEntry}
-                    nameIcon1="eye"
-                    nameIcon2="eye-off"/>
+                    <TextForm placeholder="Email"
+                        keyboardType="email-address"
+                        onChangeText={(email)=>this.setState({email})}/>
 
-                <TextForm placeholder="Konfirmasi Password"
-                    onChangeText={(confirm_password)=>this.setState({confirm_password})}
-                    maxLength={20}
-                    secure={this.state.confirm_secureTextEntry ? true : false }
-                    onPress={this.updateConfirmSecureTextEntry}
-                    condition={this.state.confirm_secureTextEntry}
-                    nameIcon1="eye"
-                    nameIcon2="eye-off"/>
+                    <View style={{marginBottom:17}}></View>
+                
+                    <TextForm placeholder="Password"
+                        onChangeText={(val) => this.handlePasswordChange(val)}
+                        maxLength={20}
+                        secure={this.state.secureTextEntry ? true : false }
+                        onPress={this.updateSecureTextEntry}
+                        condition={this.state.secureTextEntry}
+                        nameIcon1="eye"
+                        nameIcon2="eye-off">
+                        </TextForm>
 
-                <View style={{marginBottom:20}}></View>
+                    { this.state.isValidPassword != true ?
+                        <Text style={{marginHorizontal:70, color:'grey'}}>Password minimal 4 karakter</Text> :
+                        <Text style={{marginHorizontal:70, color:'white'}}></Text> }
 
-                <TouchableOpacity onPress={this._register}>
-                    <Button text='Register' bgColor='#00716F' textColor='#FFF'/>
-                </TouchableOpacity>
+                    <TextForm placeholder="Konfirmasi Password"
+                        onChangeText={(confirm_password)=>this.setState({confirm_password})}
+                        maxLength={20}
+                        secure={this.state.confirm_secureTextEntry ? true : false }
+                        onPress={this.updateConfirmSecureTextEntry}
+                        condition={this.state.confirm_secureTextEntry}
+                        nameIcon1="eye"
+                        nameIcon2="eye-off"/>
 
-                <View style={{marginBottom:20}}></View>
+                    { this.state.confirm_password == '' ?
+                        <Text style={{marginHorizontal:70, color:'grey'}}>Ketik ulang password Anda</Text> :
+                            this.state.password != this.state.confirm_password ?
+                            <Text style={{marginHorizontal:70, color:'grey'}}>Konfirmasi password belum cocok</Text> :
+                            <Text style={{marginHorizontal:70, color:'white'}}></Text> }
 
-                <TouchableOpacity onPress={()=>navigate('Login')}>
-                    <Button text='Kembali untuk Login' bgColor='#FFF' textColor='#00716F'></Button>
-                </TouchableOpacity>
+                    <View style={{marginBottom:17}}></View>
 
-            </View>
+                    { this.state.nik == '' ||
+                        this.state.email == '' ||
+                        this.state.isValidPassword == false ||
+                        this.state.password != this.state.confirm_password ?
+                        <Button text='Register' bgColor='grey' textColor='#FFF'/> :
+                        <TouchableOpacity onPress={this._register}>
+                            <Button text='Register' bgColor='#00716F' textColor='#FFF'/>
+                        </TouchableOpacity> }
+
+                    <View style={{marginBottom:20}}></View>
+
+                    <TouchableOpacity onPress={()=>navigate('Login')}>
+                        <Button text='Kembali untuk Login' bgColor='#FFF' textColor='#00716F'></Button>
+                    </TouchableOpacity>
+
+                </ScrollView>
+            </KeyboardAvoidingView>
         )
     }
 }

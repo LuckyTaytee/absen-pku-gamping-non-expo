@@ -18,18 +18,15 @@ export default class Home extends React.Component {
         this.state = { 
             isLoading: true,
             currentTime: moment().format("LTS"),
-            userInfo: {nama: '', shift: ''},
-            geolocate: {lat: 0, lon: 0, error: '', distance: 0, distanceFeedback: ''},
             absenTime: null,
             absenType:'Absen Masuk',
-            data: {},
             tableHead: ['Jadwal', 'Acuan', 'Jam', 'Status'],
             tableData: [ ['Masuk', '-', '-', '-'], ['Keluar', '-', '-', '-'] ]  
         }
     }
 
-    componentDidMount() {
-        fetch(baseURL + new URLSearchParams({ FS_KD_PEG: 1998 }), {
+    componentDidMount = async() => {
+        fetch(baseURL + new URLSearchParams({ FS_KD_PEG: await AsyncStorage.getItem('asyncNIK')}), {
             headers: { apikey: 'eabsenpku' }
         })
             .then(response => response.json())
@@ -148,6 +145,7 @@ export default class Home extends React.Component {
 
     _logout = async() => {
         await AsyncStorage.setItem('isLoggedIn', '0');
+        await AsyncStorage.setItem('asyncNIK', '');
         this.props.navigation.navigate('Login')
     }
 }

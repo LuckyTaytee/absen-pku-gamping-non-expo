@@ -10,7 +10,6 @@ const TextForm = props => {
             alignItems:"center",
             marginHorizontal:55,
             borderWidth:2,
-            marginTop:10,
             paddingHorizontal:20,
             borderColor:"#00716F",
             borderRadius:20}}>
