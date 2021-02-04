@@ -36,6 +36,13 @@ export default class Home extends React.Component {
                     data: json.data
                 });
                 let newArray = this.state.tableData;
+                if( this.state.data.shift != 0) {
+                    this.setState({shift: this.state.data.shift[0].FS_KD_SHIFT_KERJA})
+                    console.log(1)
+                } else {
+                    this.setState({shift: this.state.data.absen[0].FS_KD_SHIFT_KERJA})
+                    console.log(2)
+                }
                 newArray[0][1] = [this.state.data.absen[0].FD_JADWAL_MASUK.substring(11, 19)];
                 newArray[1][1] = [this.state.data.absen[0].FD_JADWAL_KELUAR.substring(11, 19)];
                 newArray[0][2] = [this.state.data.absen[0].FD_TRS_MASUK.substring(11, 19)];
@@ -43,7 +50,7 @@ export default class Home extends React.Component {
                 if( this.state.data.absen[0].FN_TELAT_MASUK != 0) { newArray[0][3] = 'Terlambat' } else { newArray[0][3] = 'Tepat'};
                 if( this.state.data.absen[0].FN_DULU_KELUAR != 0 && newArray[1][2] != "00:00:00" ) { newArray[1][3] = 'Dulu Keluar'};
                 if( this.state.data.absen[0].FN_DULU_KELUAR == 0 && newArray[1][2] != "00:00:00" ) { newArray[1][3] = 'Tepat'};
-                this.setState({nama: this.state.data.details[0].FS_NM_PEG, shift: this.state.data.absen[0].FS_KD_SHIFT_KERJA, tableData: newArray})
+                this.setState({nama: this.state.data.details[0].FS_NM_PEG, tableData: newArray})
             })
             .catch((error) => alert(error));
         this.getUserPosition();
@@ -122,7 +129,9 @@ export default class Home extends React.Component {
                         <View style={{marginBottom:20}}></View>
 
                         <TouchableOpacity onPress={this.getAbsenTime}>
-                            {this.state.distance < 0.2 && this.state.distance != 0 ? <Button text={this.state.absenType} bgColor='#FFF' textColor='#00716F'/> : null }
+                            {this.state.distance < 0.2 && this.state.distance != 0 ?
+                                <Button text={this.state.absenType} bgColor='#FFF' textColor='#00716F'/> :
+                                null }
                         </TouchableOpacity>
 
                         <View style={{marginBottom:20}}></View>

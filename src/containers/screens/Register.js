@@ -105,8 +105,6 @@ export default class Register extends React.Component{
                 <ScrollView>
                     <Header/>
 
-                    <Text style={{alignSelf:'center'}}>{this.state.uniqueId}</Text>
-
                     <TextForm placeholder="NIK"
                         keyboardType="number-pad"
                         maxLength={4}
@@ -146,8 +144,8 @@ export default class Register extends React.Component{
                     { this.state.confirm_password == '' ?
                         <Text style={{marginHorizontal:70, color:'grey'}}>Ketik ulang password Anda</Text> :
                             this.state.password != this.state.confirm_password ?
-                            <Text style={{marginHorizontal:70, color:'grey'}}>Konfirmasi password belum cocok</Text> :
-                            <Text style={{marginHorizontal:70, color:'white'}}></Text> }
+                                <Text style={{marginHorizontal:70, color:'grey'}}>Konfirmasi password belum cocok</Text> :
+                                <Text style={{marginHorizontal:70, color:'white'}}></Text> }
 
                     <View style={{marginBottom:17}}></View>
 

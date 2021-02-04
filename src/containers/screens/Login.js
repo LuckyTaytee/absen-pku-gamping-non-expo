@@ -50,8 +50,6 @@ export default class Login extends React.Component{
         dataLogin.append("FS_KD_PEG", this.state.nik);
         dataLogin.append("FS_KD_PASSWORD", this.state.password);
 
-        let response = '';
-
         fetch(baseURL, {
             method:"POST",
             body: dataLogin,
@@ -65,19 +63,15 @@ export default class Login extends React.Component{
                 if ( this.state.response != 200) {
                     alert('DeviceID atau Password tidak cocok');
                 } else {
-                    this.storeAsyncLogIn();
+                    this.storeAsync('isLoggedIn', '1');
                     this.props.navigation.navigate('Home');
                 }           
             })
-            this.storeAsyncNIK();
+            this.storeAsync('asyncNIK', this.state.nik);
     }
 
-    storeAsyncNIK = async() => {
-        await AsyncStorage.setItem('asyncNIK', this.state.nik);
-    }
-
-    storeAsyncLogIn = async() => {
-        await AsyncStorage.setItem('isLoggedIn', '1');
+    storeAsync = async(key, value) => {
+        await AsyncStorage.setItem(key, value);
     }
 
     updateSecureTextEntry = () => {        
@@ -108,10 +102,10 @@ export default class Login extends React.Component{
                 <Header/>
 
                 <TextForm placeholder="NIK"
-                keyboardType="number-pad"
-                onChangeText={(nik)=>this.setState({nik})}
-                maxLength={4}
-                value={this.state.nik}/>
+                    keyboardType="number-pad"
+                    onChangeText={(nik)=>this.setState({nik})}
+                    maxLength={4}
+                    value={this.state.nik}/>
 
                 <View style={{marginBottom:15}}></View>
 
