@@ -1,13 +1,13 @@
 import React from 'react';
 import {Text, View, BackHandler, Alert, Platform} from 'react-native';
 import DeviceInfo from 'react-native-device-info';
-import AsyncStorage from '@react-native-community/async-storage';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import Button from '../../components/atoms/Button/index';
 import TextForm from '../../components/atoms/TextForm';
-import Header from '../../containers/templates/Header';
+import Header from '../../components/molecules/Header';
 
-import {Permission, PERMISSION_TYPE} from '../../config/permissions/AppPermission'
+import {Permission, PERMISSION_TYPE} from '../../config/permissions/AppPermission';
+import AsyncStore from '../../config/async-storage/AsyncStorage'
 
 const baseURL = "http://192.168.5.91/apieabsen/api/auth/loginpegawai"
 
@@ -24,17 +24,12 @@ export default class Login extends React.Component{
 
     componentDidMount() {
         Permission.checkPermission(PERMISSION_TYPE.location, Platform.OS)
-        this.getUniqueId();
+        this.setState({ uniqueId: DeviceInfo.getUniqueId()})
         this.backHandler = BackHandler.addEventListener(
             "hardwareBackPress",
             this.backAction
         );
     }
-
-    getUniqueId = () => {
-        let uniqId = DeviceInfo.getUniqueId();
-        this.setState({uniqueId: uniqId});
-    };
 
     _login = () => {
         
@@ -63,15 +58,11 @@ export default class Login extends React.Component{
                 if ( this.state.response != 200) {
                     alert('DeviceID atau Password tidak cocok');
                 } else {
-                    this.storeAsync('isLoggedIn', '1');
+                    AsyncStore.setAsync('isLoggedIn', '1');
                     this.props.navigation.navigate('Home');
                 }           
             })
-            this.storeAsync('asyncNIK', this.state.nik);
-    }
-
-    storeAsync = async(key, value) => {
-        await AsyncStorage.setItem(key, value);
+            AsyncStore.setAsync('asyncNIK', this.state.nik);
     }
 
     updateSecureTextEntry = () => {        

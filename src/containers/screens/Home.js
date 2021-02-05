@@ -1,13 +1,13 @@
 import React from 'react';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {View, Text, ImageBackground, StyleSheet, ActivityIndicator, Dimensions } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
-import TableStack from '../templates/TableStack';
+import TableStack from '../../components/molecules/TableStack';
 import Button from '../../components/atoms/Button';
 import moment from 'moment';
 
 import Geolocation from 'react-native-geolocation-service';
 import DistanceLatLon from '../../config/geolocations/DistanceLatLon';
+import AsyncStore from '../../config/async-storage/AsyncStorage'
 
 const baseURL = "http://192.168.5.91/apieabsen/api/absen/getabsensi?";
 const width = Dimensions.get('window').width;
@@ -26,7 +26,7 @@ export default class Home extends React.Component {
     }
 
     componentDidMount = async() => {
-        fetch(baseURL + new URLSearchParams({ FS_KD_PEG: await AsyncStorage.getItem('asyncNIK')}), {
+        fetch(baseURL + new URLSearchParams({ FS_KD_PEG: await AsyncStore.getAsync('asyncNIK')}), {
             headers: { apikey: 'eabsenpku' }
         })
             .then(response => response.json())
@@ -153,8 +153,8 @@ export default class Home extends React.Component {
     }
 
     _logout = async() => {
-        await AsyncStorage.setItem('isLoggedIn', '0');
-        await AsyncStorage.setItem('asyncNIK', '');
+        AsyncStore.setAsync('isLoggedIn', '0');
+        AsyncStore.setAsync('asyncNIK', '');
         this.props.navigation.navigate('Login')
     }
 }

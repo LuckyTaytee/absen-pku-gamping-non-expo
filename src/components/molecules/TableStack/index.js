@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, View, Image, TextInput, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import { Table, Row, Rows } from 'react-native-table-component';
 
 const TableStack = props => {

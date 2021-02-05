@@ -4,7 +4,7 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import DeviceInfo from 'react-native-device-info';
 import Button from '../../components/atoms/Button/index';
 import TextForm from '../../components/atoms/TextForm';
-import Header from '../../containers/templates/Header';
+import Header from '../../components/molecules/Header';
 
 const baseURL = "http://192.168.5.91/apieabsen/api/auth/registerPegawai";
 
@@ -24,17 +24,12 @@ export default class Register extends React.Component{
     }
 
     componentDidMount() {
-        this.getUniqueId();
+        this.setState({ uniqueId: DeviceInfo.getUniqueId()})
         this.backHandler = BackHandler.addEventListener(
             "hardwareBackPress",
             this.backAction
           );
     }
-
-    getUniqueId = () => {
-        let uniqId = DeviceInfo.getUniqueId();
-        this.setState({uniqueId: uniqId});
-    };
 
     _register = async() => {
 
