@@ -38,6 +38,7 @@ export default class Register extends React.Component{
         dataRegister.append("FS_KD_PEG", this.state.nik);
         dataRegister.append("FS_NM_EMAIL", this.state.email);
         dataRegister.append("FS_KD_PASSWORD", this.state.password);
+
         fetch(baseURL, {
             method:"POST",
             body: dataRegister,
@@ -50,14 +51,14 @@ export default class Register extends React.Component{
                 });
                 switch (this.state.response) {
                     case 200:
-                        Alert.alert('Registrasi berhasil', 'Dapatkan approval dari tim IT terlebih dahulu agar dapat mengakses Login E-Absen')
+                        Alert.alert('Registrasi berhasil', 'Dapatkan approval dari tim IT terlebih dahulu agar dapat mengakses Login E-Absen')      // Success Handler
                         this.props.navigation.navigate('Login');
                         break;
                     case 400:
-                        Alert.alert('Registrasi gagal', 'Perangkat Anda sudah pernah diregistrasi')
+                        Alert.alert('Registrasi gagal', 'Perangkat Anda sudah pernah diregistrasi')                                                 // Duplicate Attempt Handler
                       break;
                     default:
-                        Alert.alert('Registrasi belum berhasil', 'Data belum terdaftar pada sistem, silahkan coba lagi')
+                        Alert.alert('Registrasi belum berhasil', 'Data belum terdaftar pada sistem, silahkan coba lagi')                            // Error Handler
                 }
             })
     }
@@ -71,13 +72,13 @@ export default class Register extends React.Component{
         this.backHandler.remove();
     }
 
-    handlePasswordChange = (val) => {
-        if( val.trim().length >= 4 ) {
+    handlePasswordChange = (val) => {       // Handle Password Input
+        if( val.trim().length >= 4 ) {      // Handle Password if valid                                                    
             this.setState({
                 password: val,
                 isValidPassword: true 
             })
-        } else {
+        } else {                            // Handle Password if not valid
             this.setState({
                 password: val,
                 isValidPassword: false
@@ -86,11 +87,11 @@ export default class Register extends React.Component{
     }
 
     updateSecureTextEntry = () => {        
-        this.setState({ secureTextEntry: !this.state.secureTextEntry });
+        this.setState({ secureTextEntry: !this.state.secureTextEntry });                    // Password Visibilty
     }
 
     updateConfirmSecureTextEntry = () => {        
-        this.setState({ confirm_secureTextEntry: !this.state.confirm_secureTextEntry });
+        this.setState({ confirm_secureTextEntry: !this.state.confirm_secureTextEntry });    // Confirm Password Visibility
     }
 
     render(){

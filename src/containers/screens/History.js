@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, ImageBackground, StyleSheet, Platform, FlatList, Dimensions } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStore from '../../config/async-storage/AsyncStorage'
 
 const baseURL = "http://192.168.5.91/apieabsen/api/absen/getdata?";
 
@@ -13,13 +13,13 @@ export default class History extends React.Component {
     }
 
     componentDidMount = async() => {
-        fetch(baseURL + new URLSearchParams({ FS_KD_PEG: await AsyncStorage.getItem('asyncNIK') }), {
+        fetch(baseURL + new URLSearchParams({ FS_KD_PEG: await AsyncStore.getAsync('asyncNIK') }), {
             headers: { apikey: 'eabsenpku' }
         })
             .then(response => response.json())
             .then(json => {
                 this.setState({
-                    data: json.data
+                    data: json.data                 // Set Data from API
                 });
             })
             .catch((error) => alert(error));

@@ -23,10 +23,10 @@ export default class Login extends React.Component{
     }
 
     componentDidMount() {
-        Permission.checkPermission(PERMISSION_TYPE.location, Platform.OS)
-        this.setState({ uniqueId: DeviceInfo.getUniqueId()})
-        this.backHandler = BackHandler.addEventListener(
-            "hardwareBackPress",
+        Permission.checkPermission(PERMISSION_TYPE.location, Platform.OS)       // Ask Permission to use GPS location on Android & IOS
+        this.setState({ uniqueId: DeviceInfo.getUniqueId()})                    // Get Unique Device ID
+        this.backHandler = BackHandler.addEventListener(                        
+            "hardwareBackPress",                                                // Set Device Back Button Handler
             this.backAction
         );
     }
@@ -34,31 +34,31 @@ export default class Login extends React.Component{
     _login = () => {
         
         if ( this.state.nik == 0 || this.state.password == 0) {
-            Alert.alert('Data Belum Lengkap', 'Isi semua data yang diperlukan', [
+            Alert.alert('Data Belum Lengkap', 'Isi semua data yang diperlukan', [       // Empty Input Handler
                 {text: 'OK'}
             ]);
             return;
         }
 
         let dataLogin = new FormData();
-        dataLogin.append("FS_KD_DEVICE_ID", this.state.uniqueId);
+        dataLogin.append("FS_KD_DEVICE_ID", this.state.uniqueId);                       // Forming Body for Fetch
         dataLogin.append("FS_KD_PEG", this.state.nik);
         dataLogin.append("FS_KD_PASSWORD", this.state.password);
 
         fetch(baseURL, {
-            method:"POST",
+            method: "POST",
             body: dataLogin,
             headers: { apikey: 'eabsenpku' }
             })
             .then(response => response.json())
             .then(json => {
                 this.setState({
-                    response: json.code,
+                    response: json.code,                                                // Set response code
                 });
                 if ( this.state.response != 200) {
-                    alert('DeviceID atau Password tidak cocok');
+                    alert('DeviceID atau Password tidak cocok');                        // Wrong Input Handler
                 } else {
-                    AsyncStore.setAsync('isLoggedIn', '1');
+                    AsyncStore.setAsync('isLoggedIn', '1');                             // Async Keep Logged In
                     this.props.navigation.navigate('Home');
                 }           
             })
@@ -66,11 +66,11 @@ export default class Login extends React.Component{
     }
 
     updateSecureTextEntry = () => {        
-        this.setState({ secureTextEntry: !this.state.secureTextEntry });
+        this.setState({ secureTextEntry: !this.state.secureTextEntry });                // Set Visibility Password
     }
 
     backAction = () => {
-        Alert.alert("Konfirmasi","Apakah Anda ingin keluar dari aplikasi?", [
+        Alert.alert("Konfirmasi","Apakah Anda ingin keluar dari aplikasi?", [           // Set alert when back pressed
           {
             text: "TIDAK",
             onPress: () => null,
@@ -80,10 +80,6 @@ export default class Login extends React.Component{
         ]);
         return true;
     };
-
-    componentWillUnmount() {
-        this.backHandler.remove();
-    }
     
     render(){
         const {navigate} = this.props.navigation;
