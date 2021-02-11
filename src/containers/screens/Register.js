@@ -6,7 +6,7 @@ import Button from '../../components/atoms/Button/index';
 import TextForm from '../../components/atoms/TextForm';
 import Header from '../../components/molecules/Header';
 
-const baseURL = "http://192.168.5.91/apieabsen/api/auth/registerPegawai";
+const baseURL = "http://103.247.120.115/apieabsen/api/auth/registerPegawai";
 
 export default class Register extends React.Component{
     constructor(props) {
@@ -51,7 +51,7 @@ export default class Register extends React.Component{
                 });
                 switch (this.state.response) {
                     case 200:
-                        Alert.alert('Registrasi berhasil', 'Dapatkan approval dari tim IT terlebih dahulu agar dapat mengakses Login E-Absen')      // Success Handler
+                        Alert.alert('Registrasi berhasil', 'Silahkan Login E-Absen dengan NIK yang sudah didaftarkan')      // Success Handler
                         this.props.navigation.navigate('Login');
                         break;
                     case 400:
@@ -64,12 +64,30 @@ export default class Register extends React.Component{
     }
 
     backAction = () => {
-        this.props.navigation.navigate('Login');
+        this.props.navigation.goBack();
         return true;
     };
     
     componentWillUnmount() {
         this.backHandler.remove();
+    }
+
+    handleEmailChange = (val) => {
+        console.log(val);
+        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (reg.test(val) === false) {
+            this.setState({ 
+                email: val,
+                isValidEmail: false
+            })
+            return false;
+        }
+        else {
+            this.setState({ 
+                email: val,
+                isValidEmail: true
+            })
+        }
     }
 
     handlePasswordChange = (val) => {       // Handle Password Input
@@ -95,7 +113,7 @@ export default class Register extends React.Component{
     }
 
     render(){
-        const {navigate} = this.props.navigation;
+        const navigate = this.props.navigation;
         return(
             <KeyboardAvoidingView style={{flex: 1, backgroundColor:"#FFF"}} behavior="height" >
                 <ScrollView>
@@ -110,9 +128,14 @@ export default class Register extends React.Component{
 
                     <TextForm placeholder="Email"
                         keyboardType="email-address"
-                        onChangeText={(email)=>this.setState({email})}/>
+                        onChangeText={(val) => this.handleEmailChange(val)}
+                        value={this.state.email}/>
 
-                    <View style={{marginBottom:17}}></View>
+                    { this.state.email == '' ?
+                        <Text style={{marginHorizontal:70, color:'white'}}></Text> :
+                            this.state.isValidEmail != true ?
+                                <Text style={{marginHorizontal:70, color:'grey'}}>Email belum valid</Text> :
+                                <Text style={{marginHorizontal:70, color:'white'}}></Text> }
                 
                     <TextForm placeholder="Password"
                         onChangeText={(val) => this.handlePasswordChange(val)}
@@ -124,9 +147,12 @@ export default class Register extends React.Component{
                         nameIcon2="eye-off">
                         </TextForm>
 
-                    { this.state.isValidPassword != true ?
+                    { this.state.password == '' ?
+                        <Text style={{marginHorizontal:70, color:'white'}}></Text> :
+                        this.state.isValidPassword != true ?
                         <Text style={{marginHorizontal:70, color:'grey'}}>Password minimal 4 karakter</Text> :
-                        <Text style={{marginHorizontal:70, color:'white'}}></Text> }
+                        <Text style={{marginHorizontal:70, color:'white'}}></Text>
+                        }
 
                     <TextForm placeholder="Konfirmasi Password"
                         onChangeText={(confirm_password)=>this.setState({confirm_password})}
@@ -138,7 +164,7 @@ export default class Register extends React.Component{
                         nameIcon2="eye-off"/>
 
                     { this.state.confirm_password == '' ?
-                        <Text style={{marginHorizontal:70, color:'grey'}}>Ketik ulang password Anda</Text> :
+                        <Text style={{marginHorizontal:70, color:'white'}}></Text> :
                             this.state.password != this.state.confirm_password ?
                                 <Text style={{marginHorizontal:70, color:'grey'}}>Konfirmasi password belum cocok</Text> :
                                 <Text style={{marginHorizontal:70, color:'white'}}></Text> }
@@ -146,7 +172,7 @@ export default class Register extends React.Component{
                     <View style={{marginBottom:17}}></View>
 
                     { this.state.nik == '' ||
-                        this.state.email == '' ||
+                        this.state.isValidEmail == false ||
                         this.state.isValidPassword == false ||
                         this.state.password != this.state.confirm_password ?
                         <Button text='Register' bgColor='grey' textColor='#FFF'/> :
@@ -156,7 +182,7 @@ export default class Register extends React.Component{
 
                     <View style={{marginBottom:20}}></View>
 
-                    <TouchableOpacity onPress={()=>navigate('Login')}>
+                    <TouchableOpacity onPress={()=>navigate.goBack()}>
                         <Button text='Kembali untuk Login' bgColor='#FFF' textColor='#00716F'></Button>
                     </TouchableOpacity>
 

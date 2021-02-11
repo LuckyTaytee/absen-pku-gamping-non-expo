@@ -9,7 +9,7 @@ import Header from '../../components/molecules/Header';
 import {Permission, PERMISSION_TYPE} from '../../config/permissions/AppPermission';
 import AsyncStore from '../../config/async-storage/AsyncStorage'
 
-const baseURL = "http://192.168.5.91/apieabsen/api/auth/loginpegawai"
+const baseURL = "http://103.247.120.115/apieabsen/api/auth/loginpegawai"
 
 export default class Login extends React.Component{
     
@@ -29,6 +29,10 @@ export default class Login extends React.Component{
             "hardwareBackPress",                                                // Set Device Back Button Handler
             this.backAction
         );
+    }
+
+    componentWillUnmount() {
+        this.backHandler.remove();
     }
 
     _login = () => {
@@ -62,7 +66,8 @@ export default class Login extends React.Component{
                     this.props.navigation.navigate('Home');
                 }           
             })
-            AsyncStore.setAsync('asyncNIK', this.state.nik);
+            .catch((error) => alert(error));
+            AsyncStore.setAsync('asyncNIK', this.state.nik)
     }
 
     updateSecureTextEntry = () => {        
