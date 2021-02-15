@@ -26,8 +26,16 @@ export default class History extends React.Component {
                     data: json.data                 // Set Data from API
                 });
             })
-            .catch((error) => alert(error));
-           
+            .catch((error) => {
+                Alert.alert("Alert",'Gagal memuat data, pastikan Anda terhubung ke jaringan internet.',
+                    [           
+                        { text: "OK", onPress: () => BackHandler.exitApp() }
+                    ],
+                    {
+                        cancelable: false                         
+                    });
+                  return true;
+                })
     }
 
     render(){

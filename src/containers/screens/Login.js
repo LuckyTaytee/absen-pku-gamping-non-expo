@@ -66,7 +66,7 @@ export default class Login extends React.Component{
                     this.props.navigation.navigate('Home');
                 }           
             })
-            .catch((error) => alert(error));
+            .catch((error) => alert('Login gagal, pastikan Anda terhubung ke jaringan internet.'));
             AsyncStore.setAsync('asyncNIK', this.state.nik)
     }
 

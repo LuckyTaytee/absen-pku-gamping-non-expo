@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { View, Text, ImageBackground, StyleSheet, ActivityIndicator, Dimensions, Alert } from 'react-native';
+import { View, Text, ImageBackground, StyleSheet, ActivityIndicator, Dimensions, Alert, BackHandler } from 'react-native';
 import TableStack from '../../components/molecules/TableStack';
 import Button from '../../components/atoms/Button';
 import moment from 'moment';
@@ -51,6 +51,9 @@ export default class Home extends React.Component {
                     this.state.data.status.selesai[0].SELESAI == 0 &&
                     this.state.data.status.tdk_absen_masuk[0].TDKMASUK == 0 ) {
                     this.setState({absenType: "Absen Masuk"})
+                    if( this.state.isAbsenSuccess == true) {
+                        alert("Absen Masuk tidak sesuai jadwal. Cek kembali jadwal Anda.")
+                    }
                     return
                 }
 
@@ -87,7 +90,16 @@ export default class Home extends React.Component {
                 }
                 this.setState({ isButtonLoading: false });
             })
-            .catch((error) => alert(error));
+            .catch((error) => {
+                Alert.alert("Alert",'Gagal memuat data, pastikan Anda terhubung ke jaringan internet.',
+                    [           
+                        { text: "OK", onPress: () => BackHandler.exitApp() }
+                    ],
+                    {
+                        cancelable: false                         
+                    });
+                  return true;
+            })
     }
 
     _setAbsensi = () => {
@@ -134,6 +146,16 @@ export default class Home extends React.Component {
                     () => setTimeout(this._getAbsensi, 1000)
                     )
                 }           
+            })
+            .catch((error) => {
+                Alert.alert("Alert",'Gagal memuat data, pastikan Anda terhubung ke jaringan internet.',
+                    [           
+                        { text: "OK", onPress: () => BackHandler.exitApp() }
+                    ],
+                    {
+                        cancelable: false                         
+                    });
+                  return true;
             })
     }
 
@@ -205,7 +227,6 @@ export default class Home extends React.Component {
                         <Text style={[styles.text, { fontFamily:"Mont-Regular" }]}>
                             Saat ini Anda terjadwal,
                             <Text style={{fontFamily:"Mont-Bold"}}>{'\t'}{'\t'}{state.shift}</Text>
-                             :
                         </Text>
     
                         <TableStack dataHead={state.tableHead} dataTable={state.tableData} fontSize={0.035*width}/>
